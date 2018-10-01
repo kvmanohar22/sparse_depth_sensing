@@ -6,6 +6,7 @@
 - Chainer
 - ChainerCV
 - cupy
+- [imgplot](https://github.com/musyoku/imgplot/)
 
 # Usage
 - Append the path to the root of this directory to `PYTHONPATH` environment variable

@@ -9,8 +9,8 @@ from chainer.backends import cuda
 from chainer.backends.cuda import to_cpu
 from chainer.backends.cuda import to_gpu
 
-from utils.options import options
-from densenet import DenseNet_conv
+from sparse_depth_sensing.utils.options import options
+from .densenet import DenseNet_conv
 
 class D3(chainer.Chain):
 
