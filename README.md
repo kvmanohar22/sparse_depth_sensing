@@ -14,15 +14,15 @@
 - [ ] Implement training loop
 
 # Current Progress
-From left to right, input image, ground truth depth map, depth mask, sparse depth map 1 and sparse depth map 2. \\
-Downsampling factor of `24x24`
+From left to right, input image, ground truth depth map, depth mask, sparse depth map 1 and sparse depth map 2. \
+## Downsampling factor of `24x24`
 
 <div class="fig figcenter fighighlight">
-  <img src="./test_data/24x24_image.png" width="19%" style="margin-right:1px;">
-  <img src="./test_data/24x24_depth.png" width="19%" style="margin-right:1px;">
-  <img src="./test_data/24x24_mask.png" width="19%" style="margin-right:1px;">
-  <img src="./test_data/24x24_s1.png" width="19%" style="margin-right:1px;">
-  <img src="./test_data/24x24_s2.png" width="20%">
+  <img src="./tests/test_data/24x24_image.png" width="19%" style="margin-right:1px;">
+  <img src="./tests/test_data/24x24_depth.png" width="19%" style="margin-right:1px;">
+  <img src="./tests/test_data/24x24_mask.png" width="19%" style="margin-right:1px;">
+  <img src="./tests/test_data/24x24_s1.png" width="19%" style="margin-right:1px;">
+  <img src="./tests/test_data/24x24_s2.png" width="20%">
 </div>
 
 # Usage :construction: WIP :construction:
