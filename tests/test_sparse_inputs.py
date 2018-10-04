@@ -2,18 +2,22 @@ from sparse_depth_sensing.utils.utils import sparse_inputs
 from sparse_depth_sensing.utils.utils import generate_mask
 
 import h5py
+import time
 import pickle
+import numpy
+numpy.set_printoptions(threshold=numpy.nan)
 import numpy as np
 import skimage.io as io
 import matplotlib.pyplot as plt
 
-def main():
+
+def main(Ah=24, Aw=24):
     """ Test sparse inputs generation
     """
     print('Testing sparse input generation')
 
-    idx = 123
-    datafile = '/home/ankush/i18/sparse_depth_sensing/dataset/labeled_dataset.mat'
+    idx = 1008
+    datafile = '/path/to/labeled_dataset.mat'
 
     f = h5py.File(datafile)
     img = f['images'][idx]
@@ -21,8 +25,10 @@ def main():
 
     img = np.transpose(img, (2, 1, 0))
     depth = np.transpose(depth, (1, 0))
-    mask = generate_mask(48, 48, 480, 640)
-    sparse_data = sparse_inputs(img, depth, mask, Ah=48, Aw=48)
+    mask = generate_mask(Ah, Aw, 480, 640)
+    start = time.time()
+    sparse_data = sparse_inputs(img, depth, mask, Ah=Ah, Aw=Aw)
+    print('Time taken: {:.2f}s'.format(time.time()-start))
     S1, S2 = np.split(sparse_data, 1)[0]
 
     fig = plt.figure()
@@ -44,4 +50,4 @@ def main():
     plt.show()
 
 if __name__ == '__main__':
-    main()
+    main(Ah=48, Aw=48)

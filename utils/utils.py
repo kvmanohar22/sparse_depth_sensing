@@ -1,3 +1,5 @@
+import numpy
+numpy.set_printoptions(numpy.nan)
 import numpy as np
 import os
 import sys
@@ -36,20 +38,25 @@ def sparse_inputs(img, depth, mask, Ah, Aw):
                 x, y = dist_tuple[closest_pixel]
                 mask[x, y] = 1
 
-    # Construct sparse inputs
-    sparse_depth_points = [(i, j) for i in range(H) for j in range(W) if mask[i, j]]
-    for i in range(H):
-        for j in range(W):
-            print(i, j)
-            r_nearest_vec = [np.sqrt(
-                np.square(i-vec[0])+np.square(j-vec[1]))
-                for vec in sparse_depth_points if np.abs(vec[0]-i) < 2*Ah and np.abs(vec[1]-j) < 2 * Aw
-            ]
-            r_nearest = np.argmin(r_nearest_vec)
-            x, y = sparse_depth_points[r_nearest]
-            S1[i, j] = depth[x, y]
-            S2[i, j] = np.sqrt(np.sqrt(np.square(x-i)+np.square(y-j)))
-    S1, S2 = S1[np.newaxis], S2[np.newaxis]
+    Sh = [i for i in range(H) for j in range(W) if mask[i, j]]
+    Sw = [j for i in range(H) for j in range(W) if mask[i, j]]
+    idx_to_depth = {}
+    for i, (x, y) in enumerate(zip(Sh, Sw)):
+        idx_to_depth[i] = x * W + y
+
+    Sh, Sw = np.array(Sh), np.array(Sw)
+    Hd, Wd = np.empty((H, W)), np.empty((H, W))
+    Hd.T[:, ] = np.arange(H)
+    Wd[:, ] = np.arange(W)
+    Hd, Wd = Hd[..., None], Wd[..., None]
+    Hd2 = np.square(Hd - Sh)
+    Wd2 = np.square(Wd - Sw)
+    dmap = np.sqrt(Hd2 + Wd2)
+    dmap_arg = np.argmin(dmap, axis=-1)
+    dmap_arg = dmap_arg.ravel()
+    dmap_arg = np.array([idx_to_depth[i] for i in dmap_arg])
+    S1 = depth.ravel()[dmap_arg].reshape(H, W)[None]
+    S2 = np.sqrt(np.min(dmap, axis=-1))[None]
     return np.concatenate((S1, S2), axis=0)
 
 def path_exists(path):
@@ -62,7 +69,7 @@ def path_exists(path):
 
 def generate_mask(Ah, Aw, H, W):
     """ Generates mask for the depth data
-    
+        Sparsity is: depth_values
     Args:
         Ah: Downsampling factor along h
         Aw: Downsampling factor along w
@@ -77,5 +84,5 @@ def generate_mask(Ah, Aw, H, W):
     dh = np.rint(H * 1.0 / Ah).astype(np.int32)
     dw = np.rint(W * 1.0 / Aw).astype(np.int32)
     depth_values = dh * dw
-    mask[0:None:dh, 0:None:dw] = 1
+    mask[0:None:Ah, 0:None:Aw] = 1
     return mask
